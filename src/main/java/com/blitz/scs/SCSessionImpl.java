@@ -1,16 +1,23 @@
 package com.blitz.scs;
 
+import com.blitz.scs.error.SCSBrokenException;
 import com.blitz.scs.error.SCSException;
+import com.blitz.scs.error.SCSExpiredException;
+import com.blitz.scs.service.CryptoException;
 import com.blitz.scs.service.CryptoTransformationService;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.StringUtils;
+
 import java.util.Date;
 import static com.blitz.scs.DeflateUtils.deflate;
+import static com.blitz.scs.DeflateUtils.inflate;
 import static org.apache.commons.codec.binary.StringUtils.getBytesUtf8;
 
 class SCSessionImpl implements SCSession {
     private static final char FIELD_SEPARATOR = '|';
-    private static final String CRYPTO_TID = "SH1ASCBC128";
+    private static final String SERVICE_NAME = "com.blitz.scs.Service";
     private static final int ivLength = 16;
+    private static final long SESSION_MAX_AGE_IN_SEC = 1800;
 
     private final String data;
     private final byte[] encData;
@@ -19,23 +26,56 @@ class SCSessionImpl implements SCSession {
     private final byte[] iv;
     private final byte[] authTag;
 
-    SCSessionImpl(final String data, final boolean compress, final CryptoTransformationService crypto)
+    SCSessionImpl(final String data, final boolean compressed, final CryptoTransformationService crypto)
             throws SCSException {
-        this(data, new Date(), compress, crypto);
+        this(data, new Date(), compressed, crypto);
     }
 
-    SCSessionImpl(final String data, final Date atime, final boolean compress, final CryptoTransformationService crypto)
+    SCSessionImpl(final String data, final Date atime, final boolean compressed, final CryptoTransformationService crypto)
             throws SCSException {
         this.data = data;
-        this.tid = CRYPTO_TID;
+        this.tid = crypto.getTid(SERVICE_NAME);
         this.iv = crypto.generateIv(ivLength);
-        this.encData = crypto.encrypt(this.tid, this.iv, compress?deflate(this.data):getBytesUtf8(this.data));
+        try {
+            this.encData = crypto.encrypt(this.tid, this.iv, compressed?deflate(this.data):getBytesUtf8(this.data));
+        } catch (CryptoException e) {
+            throw new SCSException(e.getMessage());
+        }
         this.atime = atime;
         this.authTag = crypto.createHmac(this.tid, box(
                 Base64.encodeBase64URLSafeString(this.encData),
                 Base64.encodeBase64URLSafeString(getBytesUtf8(Long.toString(this.atime.getTime() / 1000))),
                 Base64.encodeBase64URLSafeString(getBytesUtf8(this.tid)),
                 Base64.encodeBase64URLSafeString(this.iv)));
+    }
+
+    SCSessionImpl(final boolean compressed, final CryptoTransformationService crypto, final String scs)
+            throws SCSException {
+        final String[] parts = scs.split("\\|");
+        if(parts.length != 5) {
+            throw new SCSBrokenException("SCS haven't go all parts");
+        }
+
+        this.tid = StringUtils.newStringUtf8(Base64.decodeBase64(parts[2]));
+        this.authTag = Base64.decodeBase64(parts[4]);
+        if(!crypto.verifyHmac(tid, authTag, box(parts[0], parts[1], parts[2], parts[3]))) {
+            throw new SCSBrokenException("mac is wrong");
+        }
+
+        final long atimeInSec = Long.valueOf(StringUtils.newStringUtf8(Base64.decodeBase64(parts[1])));
+        if(atimeInSec + SESSION_MAX_AGE_IN_SEC > (new Date().getTime() / 1000)) {
+            throw new SCSExpiredException(new Date(atimeInSec * 1000), new Date());
+        }
+        this.atime = new Date(atimeInSec * 1000);
+        this.iv = Base64.decodeBase64(parts[3]);
+        this.encData = Base64.decodeBase64(parts[0]);
+        try {
+            this.data = StringUtils.newStringUtf8((compressed)?
+                    inflate(crypto.decrypt(this.tid, this.iv, this.encData)):
+                    crypto.decrypt(this.tid, this.iv, this.encData));
+        } catch (CryptoException e) {
+            throw new SCSException(e.getMessage());
+        }
     }
 
     @Override

@@ -35,7 +35,7 @@ public class DeflateUtils {
         return out;
     }
 
-    public static String inflate(final byte[] compressed) throws SCSException {
+    public static byte[] inflate(final byte[] compressed) throws SCSException {
         final Inflater inflater = new Inflater();
         final byte[] tmp = new byte[4096];
 
@@ -50,7 +50,9 @@ public class DeflateUtils {
             throw new SCSException(e.getMessage());
         }
         inflater.end();
-        return bytes2String(tmp, 0, outSize);
+        final byte[] result = new byte[outSize];
+        System.arraycopy(tmp, 0, result, 0, outSize);
+        return result;
     }
 
     private static String bytes2String(final byte[] bytes, final int ofs, final int size) throws SCSException {

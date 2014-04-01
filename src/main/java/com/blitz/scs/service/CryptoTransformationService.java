@@ -6,6 +6,13 @@ package com.blitz.scs.service;
 public interface CryptoTransformationService {
 
     /**
+     * Returns the current TID (transformation set ID) for the service specified by its name.
+     * @param serviceName - service name.
+     * @return - current TID.
+     */
+    public String getTid(final String serviceName);
+
+    /**
      * Generates arbitrary length IV.
      * @param length - IV length.
      * @return - generated IV.
@@ -18,7 +25,7 @@ public interface CryptoTransformationService {
      * @param plain - plain text to encrypt.
      * @return - encoded data.
      */
-    public byte[] encrypt(final String tid, final byte[] iv, final byte[] plain);
+    public byte[] encrypt(final String tid, final byte[] iv, final byte[] plain) throws CryptoException;
 
     /**
      * Decrypts the specified upper hex cipher text with algorithm corresponding to
@@ -27,7 +34,7 @@ public interface CryptoTransformationService {
      * @param cipher - cipher text to decrypt.
      * @return - decrypted data.
      */
-    public byte[] decrypt(final String tid, final byte[] iv, final byte[] cipher);
+    public byte[] decrypt(final String tid, final byte[] iv, final byte[] cipher) throws CryptoException;
 
     /**
      * Calculates HMAC of the specified massage with algorithm corresponding to the specified transformation identifier.
