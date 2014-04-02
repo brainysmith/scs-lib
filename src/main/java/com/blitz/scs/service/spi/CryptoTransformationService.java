@@ -2,7 +2,6 @@ package com.blitz.scs.service.spi;
 
 /**
  * Service that provides basic cryptographic operations used in processing of SCS.
- * The service instance must be thread safe.
  */
 public interface CryptoTransformationService {
 

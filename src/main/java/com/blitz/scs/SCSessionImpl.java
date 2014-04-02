@@ -14,7 +14,7 @@ import static com.blitz.scs.DeflateUtils.deflate;
 import static com.blitz.scs.DeflateUtils.inflate;
 import static org.apache.commons.codec.binary.StringUtils.getBytesUtf8;
 
-class SCSessionImpl implements SCSession {
+final class SCSessionImpl implements SCSession {
     private static final char FIELD_SEPARATOR = '|';
     private static final String SERVICE_NAME = "com.blitz.scs.Service";
     private static final long SESSION_MAX_AGE_IN_SEC =
