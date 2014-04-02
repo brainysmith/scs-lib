@@ -1,9 +1,8 @@
 package com.blitz.scs.service.spi;
 
-import com.blitz.scs.service.CryptoException;
-
 /**
  * Service that provides basic cryptographic operations used in processing of SCS.
+ * The service instance must be thread safe.
  */
 public interface CryptoTransformationService {
 
@@ -15,11 +14,11 @@ public interface CryptoTransformationService {
     public String getTid(final String serviceName);
 
     /**
-     * Generates arbitrary length IV.
-     * @param length - IV length.
+     * Generates arbitrary IV by the specified TID.
+     * @param tid - cryptographic transformation set.
      * @return - generated IV.
      */
-    public byte[] generateIv(int length);
+    public byte[] generateIv(final String tid);
 
     /**
      * Encrypts plain data with algorithm corresponding to the specified transformation identifier.

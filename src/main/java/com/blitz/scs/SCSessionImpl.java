@@ -3,8 +3,9 @@ package com.blitz.scs;
 import com.blitz.scs.error.SCSBrokenException;
 import com.blitz.scs.error.SCSException;
 import com.blitz.scs.error.SCSExpiredException;
-import com.blitz.scs.service.CryptoException;
-import com.blitz.scs.service.CryptoTransformationService;
+import com.blitz.scs.service.ServiceProvider;
+import com.blitz.scs.service.spi.CryptoException;
+import com.blitz.scs.service.spi.CryptoTransformationService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 
@@ -16,8 +17,8 @@ import static org.apache.commons.codec.binary.StringUtils.getBytesUtf8;
 class SCSessionImpl implements SCSession {
     private static final char FIELD_SEPARATOR = '|';
     private static final String SERVICE_NAME = "com.blitz.scs.Service";
-    private static final int ivLength = 16;
-    private static final long SESSION_MAX_AGE_IN_SEC = 1800;
+    private static final long SESSION_MAX_AGE_IN_SEC =
+            ServiceProvider.INSTANCE.getConfiguration().getLong("com.blitz.scs.sessionMaxAgeInSec", 3600L);
 
     private final String data;
     private final byte[] encData;
@@ -35,7 +36,7 @@ class SCSessionImpl implements SCSession {
             throws SCSException {
         this.data = data;
         this.tid = crypto.getTid(SERVICE_NAME);
-        this.iv = crypto.generateIv(ivLength);
+        this.iv = crypto.generateIv(this.tid);
         try {
             this.encData = crypto.encrypt(this.tid, this.iv, compressed?deflate(this.data):getBytesUtf8(this.data));
         } catch (CryptoException e) {
@@ -63,7 +64,7 @@ class SCSessionImpl implements SCSession {
         }
 
         final long atimeInSec = Long.valueOf(StringUtils.newStringUtf8(Base64.decodeBase64(parts[1])));
-        if(atimeInSec + SESSION_MAX_AGE_IN_SEC > (new Date().getTime() / 1000)) {
+        if(atimeInSec + SESSION_MAX_AGE_IN_SEC < (new Date().getTime() / 1000)) {
             throw new SCSExpiredException(new Date(atimeInSec * 1000), new Date());
         }
         this.atime = new Date(atimeInSec * 1000);
