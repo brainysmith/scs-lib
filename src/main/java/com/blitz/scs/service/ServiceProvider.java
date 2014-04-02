@@ -1,5 +1,6 @@
 package com.blitz.scs.service;
 
+import com.blitz.scs.service.spi.ConfigurationService;
 import com.blitz.scs.service.spi.CryptoTransformationService;
 
 /**
@@ -16,5 +17,8 @@ public enum ServiceProvider {
 
     public CryptoTransformationService getCryptoService() {
         return cryptoService;
+    }
+    public ConfigurationService getConfiguration() {
+        return null;
     }
 }

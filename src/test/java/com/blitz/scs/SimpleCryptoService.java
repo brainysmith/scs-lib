@@ -1,7 +1,7 @@
 package com.blitz.scs;
 
-import com.blitz.scs.service.CryptoException;
-import com.blitz.scs.service.CryptoTransformationService;
+import com.blitz.scs.service.spi.CryptoException;
+import com.blitz.scs.service.spi.CryptoTransformationService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.bouncycastle.crypto.BufferedBlockCipher;
@@ -15,8 +15,6 @@ import org.bouncycastle.crypto.paddings.PKCS7Padding;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
-
-import java.util.Arrays;
 
 public class SimpleCryptoService implements CryptoTransformationService {
     private final byte[] iv;

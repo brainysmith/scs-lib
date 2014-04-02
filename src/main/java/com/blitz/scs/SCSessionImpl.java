@@ -3,8 +3,8 @@ package com.blitz.scs;
 import com.blitz.scs.error.SCSBrokenException;
 import com.blitz.scs.error.SCSException;
 import com.blitz.scs.error.SCSExpiredException;
-import com.blitz.scs.service.CryptoException;
-import com.blitz.scs.service.CryptoTransformationService;
+import com.blitz.scs.service.spi.CryptoException;
+import com.blitz.scs.service.spi.CryptoTransformationService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 
@@ -13,7 +13,7 @@ import static com.blitz.scs.DeflateUtils.deflate;
 import static com.blitz.scs.DeflateUtils.inflate;
 import static org.apache.commons.codec.binary.StringUtils.getBytesUtf8;
 
-class SCSessionImpl implements SCSession {
+final class SCSessionImpl implements SCSession {
     private static final char FIELD_SEPARATOR = '|';
     private static final String SERVICE_NAME = "com.blitz.scs.Service";
     private static final int ivLength = 16;

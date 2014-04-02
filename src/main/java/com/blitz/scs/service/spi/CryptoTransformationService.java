@@ -1,6 +1,6 @@
 package com.blitz.scs.service.spi;
 
-import com.blitz.scs.service.CryptoException;
+import com.blitz.scs.service.spi.CryptoException;
 
 /**
  * Service that provides basic cryptographic operations used in processing of SCS.

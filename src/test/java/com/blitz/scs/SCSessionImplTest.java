@@ -1,7 +1,7 @@
 package com.blitz.scs;
 
 import com.blitz.scs.error.SCSException;
-import com.blitz.scs.service.CryptoTransformationService;
+import com.blitz.scs.service.spi.CryptoTransformationService;
 import junit.framework.Assert;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.BeforeClass;
