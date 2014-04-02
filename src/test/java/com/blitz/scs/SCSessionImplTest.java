@@ -5,9 +5,12 @@ import com.blitz.scs.error.SCSException;
 import com.blitz.scs.service.spi.CryptoTransformationService;
 import junit.framework.Assert;
 import org.apache.commons.codec.binary.Base64;
+import org.easymock.EasyMock;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 public class SCSessionImplTest {
@@ -69,7 +72,6 @@ public class SCSessionImplTest {
         final byte[] hmacKey = "01234567890123456789".getBytes();
         final long atime = 1396350513;
 
-
         SimpleCryptoService cryptoService = new SimpleCryptoService();
         cryptoService.init("uWArYb9mV08tboY8DSVylA", encKey, hmacKey);
         SCSession session = new SCSessionImpl(true, cryptoService, originalScs);
@@ -92,6 +94,20 @@ public class SCSessionImplTest {
         SimpleCryptoService cryptoService = new SimpleCryptoService();
         cryptoService.init("PZ84RGBeLN_S9n-sViQTnQ", encKey, hmacKey);
         SCSession session = new SCSessionImpl(false, cryptoService, originalScs);
+    }
+
+    @Test
+    public void scsSCSServiceTest() throws SCSException {
+        HttpServletRequest requestMock = EasyMock.createMock(HttpServletRequest.class);
+        EasyMock.expect(requestMock.getCookies()).andReturn(new Cookie[]{});
+        EasyMock.replay(requestMock);
+
+        final SCSService service = new SCSService();
+        SCSession session = service.extractFromUpstream(requestMock);
+        Assert.assertNull(session);
+
+        //TODO write
+
     }
 
 }

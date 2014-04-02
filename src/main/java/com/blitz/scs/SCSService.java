@@ -16,6 +16,12 @@ public final class SCSService {
     private static final String SCS_COOKIE_NAME = ServiceProvider.INSTANCE.getConfiguration()
             .getString("com.blitz.scs.cookieName", "SCS");
     private static final String SCS_ATTRIBUTE_NAME = "com.blitz.scs.requestAttribute";
+    private static final String DOMAIN = ServiceProvider.INSTANCE.getConfiguration()
+            .getString("com.blitz.scs.cookieDomain");
+    private static final boolean IS_SECURE = ServiceProvider.INSTANCE.getConfiguration()
+            .getBoolean("com.blitz.scs.cookieIsSecure", false);
+    private static final String PATH = ServiceProvider.INSTANCE.getConfiguration()
+            .getString("com.blitz.scs.cookiePath", "/");
 
     private boolean useCompression;
     private CryptoTransformationService cryptoService;
@@ -128,9 +134,13 @@ public final class SCSService {
         return null;
     }
 
-    private static Cookie createSCSCookie(final SCSession scs) {
-        //TODO write
-        return null;
+    private static Cookie createSCSCookie(final SCSession scs) throws SCSException {
+        final Cookie scsCookie = new Cookie(SCS_COOKIE_NAME, scs.asString());
+        scsCookie.setDomain(DOMAIN);
+        scsCookie.setSecure(IS_SECURE);
+        scsCookie.setHttpOnly(true);
+        scsCookie.setPath(PATH);
+        return scsCookie;
     }
 
 }

@@ -9,6 +9,7 @@ public class SimpleConfigurationService implements ConfigurationService {
     private final Map<String, Object> config = new HashMap<String, Object>() {
         {
             put("com.blitz.scs.sessionMaxAgeInSec", 7 * 365 * 86400L);
+            put("com.blitz.scs.cookieDomain", "blitz.com");
         }
     };
 
@@ -30,7 +31,19 @@ public class SimpleConfigurationService implements ConfigurationService {
 
     @Override
     public String getString(String name, String defaultValue) {
-        return (String)config.get(name);
+        String value = (String) config.get(name);
+        return (value != null) ? value : defaultValue;
+    }
+
+    @Override
+    public Boolean getBoolean(String name) {
+        return (Boolean)config.get(name);
+    }
+
+    @Override
+    public Boolean getBoolean(String name, Boolean defaultValue) {
+        Boolean value = (Boolean)config.get(name);
+        return (value != null)?value:defaultValue;
     }
 
 }
