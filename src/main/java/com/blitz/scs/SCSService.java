@@ -150,7 +150,10 @@ public final class SCSService {
     }
 
     private static Cookie findCookie(final HttpServletRequest request, final String cookieName) {
-        for(Cookie cookie : request.getCookies()) {
+        final Cookie[] cookies = request.getCookies();
+        if(cookies == null)
+            return null;
+        for(Cookie cookie : cookies) {
             if(cookieName.equals(cookie.getName()))
                 return cookie;
         }
