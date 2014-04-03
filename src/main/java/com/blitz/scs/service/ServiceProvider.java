@@ -17,17 +17,17 @@ public enum ServiceProvider {
     private static final ConfigurationService configService;
 
     static {
-        final Iterator<CryptoTransformationService> ctsItr =
-                ServiceLoader.load(CryptoTransformationService.class).iterator();
-        if(!ctsItr.hasNext())
-            throw new RuntimeException("cryptographic transformation service is undefined.");
-        cryptoService = ctsItr.next();
-
         final Iterator<ConfigurationService> cItr =
                 ServiceLoader.load(ConfigurationService.class).iterator();
         if(!cItr.hasNext())
             throw new RuntimeException("configuration service is undefined.");
         configService = cItr.next();
+
+        final Iterator<CryptoTransformationService> ctsItr =
+                ServiceLoader.load(CryptoTransformationService.class).iterator();
+        if(!ctsItr.hasNext())
+            throw new RuntimeException("cryptographic transformation service is undefined.");
+        cryptoService = ctsItr.next();
     }
 
     public CryptoTransformationService getCryptoService() {

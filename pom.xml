@@ -6,6 +6,7 @@
 
     <groupId>com.blitz.scs-lib</groupId>
     <artifactId>scs-lib</artifactId>
+    <name>scs-lib</name>
     <version>0.1</version>
 
     <properties>
@@ -18,6 +19,11 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.6</version>
         </dependency>
 
         <dependency>
@@ -48,7 +54,7 @@
 
     <build>
         <directory>${project.basedir}/target</directory>
-        <finalName>${project.name}</finalName>
+        <finalName>${name}-${version}</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>

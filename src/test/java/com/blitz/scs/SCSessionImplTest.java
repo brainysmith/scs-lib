@@ -2,21 +2,21 @@ package com.blitz.scs;
 
 import com.blitz.scs.error.SCSBrokenException;
 import com.blitz.scs.error.SCSException;
-import com.blitz.scs.service.spi.CryptoTransformationService;
 import junit.framework.Assert;
 import org.apache.commons.codec.binary.Base64;
-import org.easymock.EasyMock;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 public class SCSessionImplTest {
 
     @BeforeClass
-    public static void setUp() throws Throwable {}
+    public static void setUp() throws Throwable {
+        System.setProperty("com.blitz.scs.crypto.encodingKey", "30313233343536373839616263646566");
+        System.setProperty("com.blitz.scs.crypto.hmacKey", "3031323334353637383930313233343536373839");
+        System.setProperty("com.blitz.scs.sessionMaxAgeInSec", Long.toString(7 * 365 * 86400L));
+        System.setProperty("com.blitz.scs.cookieDomain", "blitz.com");
+    }
 
     @Test
     public void scsEncodingTest() throws SCSException {
@@ -94,20 +94,6 @@ public class SCSessionImplTest {
         SimpleCryptoService cryptoService = new SimpleCryptoService();
         cryptoService.init("PZ84RGBeLN_S9n-sViQTnQ", encKey, hmacKey);
         SCSession session = new SCSessionImpl(false, cryptoService, originalScs);
-    }
-
-    @Test
-    public void scsSCSServiceTest() throws SCSException {
-        HttpServletRequest requestMock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(requestMock.getCookies()).andReturn(new Cookie[]{});
-        EasyMock.replay(requestMock);
-
-        final SCSService service = new SCSService();
-        SCSession session = service.extractFromUpstream(requestMock);
-        Assert.assertNull(session);
-
-        //TODO write
-
     }
 
 }

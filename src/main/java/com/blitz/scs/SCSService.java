@@ -3,36 +3,53 @@ package com.blitz.scs;
 import com.blitz.scs.error.SCSException;
 import com.blitz.scs.service.ServiceProvider;
 import com.blitz.scs.service.spi.CryptoTransformationService;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static com.blitz.scs.LoggingUtils.getLogger;
 
 /**
  * The service provides operations to work with SCS. The basic operations to encode and decode SCS.
  * Some handy operations to handle SCS with HTTP requests.
+ * The configuration parameters the service has is listed in the table below.
+ * <table>
+ *     <col width="25%"/>
+ *     <col width="50%"/>
+ *     <col width="25%"/>
+ *     <thead>
+ *         <tr><th>Name</th><th>Description</th><th>Default value</th></tr>
+ *     </thead>
+ *     <tbody>
+ *         <tr><td>com.blitz.scs.cookieName</td><td>SCS cookie name.</td><td>SCS</td></tr>
+ *         <tr><td>com.blitz.scs.cookieDomain</td><td>SCS cookie domain.</td><td></td></tr>
+ *         <tr><td>com.blitz.scs.cookiePath</td><td>SCS cookie path.</td><td>/</td></tr>
+ *         <tr><td>com.blitz.scs.cookieIsSecure</td><td>To transfer a SCS cookie only over SSL.</td><td>false</td></tr>
+ *     </tbody>
+ * </table>
  */
 public final class SCSService {
     private static final String SCS_COOKIE_NAME = ServiceProvider.INSTANCE.getConfiguration()
             .getString("com.blitz.scs.cookieName", "SCS");
-    private static final String SCS_ATTRIBUTE_NAME = "com.blitz.scs.requestAttribute";
     private static final String DOMAIN = ServiceProvider.INSTANCE.getConfiguration()
             .getString("com.blitz.scs.cookieDomain");
     private static final boolean IS_SECURE = ServiceProvider.INSTANCE.getConfiguration()
             .getBoolean("com.blitz.scs.cookieIsSecure", false);
     private static final String PATH = ServiceProvider.INSTANCE.getConfiguration()
             .getString("com.blitz.scs.cookiePath", "/");
+    private static final String SCS_ATTRIBUTE_NAME = "com.blitz.scs.requestAttribute";
 
     private boolean useCompression;
     private CryptoTransformationService cryptoService;
 
     public SCSService() {
         this.useCompression = false;
+        getLogger().debug("SCS cookie compression is set to false.");
         cryptoService = ServiceProvider.INSTANCE.getCryptoService();
     }
 
     public void init(final boolean useCompression) {
         this.useCompression = useCompression;
+        getLogger().debug("SCS cookie compression is set to {}.", this.useCompression);
     }
 
     /**
@@ -71,11 +88,14 @@ public final class SCSService {
      */
     public SCSession extractFromUpstream(final HttpServletRequest request) throws SCSException {
         final Cookie scsCookie = findCookie(request, SCS_COOKIE_NAME);
-        if(scsCookie == null)
+        if(scsCookie == null) {
+            getLogger().debug("SCS cookie is absent in the request.");
             return null;
+        }
 
         final SCSession session = decode(scsCookie.getValue());
         request.setAttribute(SCS_ATTRIBUTE_NAME, session.getData());
+        getLogger().debug("SCS [{}] is extracted from request cookie.", session);
         return session;
     }
 
@@ -87,7 +107,7 @@ public final class SCSService {
      * @param request - HTTP request.
      * @return - current session state.
      */
-    public String getCurrentSCS(final HttpServletRequest request) {
+    public static String getCurrentSCS(final HttpServletRequest request) {
         return (String)request.getAttribute(SCS_ATTRIBUTE_NAME);
     }
 
@@ -96,7 +116,7 @@ public final class SCSService {
      * @param request - HTTP request.
      * @param newSessionState - new session state.
      */
-    public void changeCurrentSCS(final HttpServletRequest request, final String newSessionState) {
+    public static void changeCurrentSCS(final HttpServletRequest request, final String newSessionState) {
         request.setAttribute(SCS_ATTRIBUTE_NAME, newSessionState);
     }
 
@@ -114,14 +134,17 @@ public final class SCSService {
             final SCSession prevSession = extractFromUpstream(request);
             if(prevSession != null) {
                 currentState = prevSession.getData();
+                getLogger().debug("session state from previous SCS is used.");
             }
         }
         if(currentState != null) {
             final SCSession session  = encode(currentState);
             response.addCookie(createSCSCookie(session));
+            getLogger().debug("session state is stored into SCS cookie {}.", session);
             return session;
         }
         else {
+            getLogger().debug("there is no session state to store in SCS cookie.");
             return null;
         }
     }
@@ -140,6 +163,10 @@ public final class SCSService {
         scsCookie.setSecure(IS_SECURE);
         scsCookie.setHttpOnly(true);
         scsCookie.setPath(PATH);
+        getLogger().debug("SCS cookie [name = {}, value = {}, domain = {}, " +
+                "secure = {}, httpOnly = {}, path = {}] has been created.",
+                new Object[]{scsCookie.getName(), scsCookie.getValue(), scsCookie.getDomain(),
+                        scsCookie.getSecure(), scsCookie.isHttpOnly(), scsCookie.getPath()});
         return scsCookie;
     }
 
