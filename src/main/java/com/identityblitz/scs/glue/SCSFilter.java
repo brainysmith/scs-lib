@@ -7,6 +7,7 @@ import com.identityblitz.scs.service.ServiceProvider;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 
 import static com.identityblitz.scs.LoggingUtils.getLogger;
@@ -41,7 +42,7 @@ public class SCSFilter implements Filter {
         } catch (SCSException e) {
             throw new ServletException(e);
         }
-        chain.doFilter(request, response);
+        chain.doFilter(request, new ScsHttpServletResponse((HttpServletResponse)response, httpRequest, scsService));
         try {
             if(response.isCommitted()) {
                 getLogger().warn("Response is already committed so SCS cookie will not be set and all session state changes " +
@@ -58,4 +59,39 @@ public class SCSFilter implements Filter {
 
     @Override
     public void destroy() {}
+}
+
+class ScsHttpServletResponse extends HttpServletResponseWrapper {
+    private final HttpServletRequest request;
+    private final SCSService scsService;
+
+    /**
+     * Constructs a response adaptor wrapping the given response.
+     *
+     * @param response
+     * @throws IllegalArgumentException if the response is null
+     */
+    public ScsHttpServletResponse(HttpServletResponse response, HttpServletRequest request, SCSService scsService) {
+        super(response);
+        this.request = request;
+        this.scsService = scsService;
+    }
+
+    @Override
+    public void sendRedirect(String location) throws IOException {
+        if(isCommitted()) {
+            getLogger().warn("Response is already committed so SCS cookie will not be set and all session state changes " +
+                    "made during processing the current request will be lost.");
+        }
+        else {
+            final SCSession session;
+            try {
+                session = scsService.putIntoDownstream(this, request);
+                getLogger().debug("Session put into downstream: {}.", session);
+            } catch (SCSException e) {
+                getLogger().error("A error occurred while encoding SCS: {}.", e.getMessage());
+            }
+        }
+        super.sendRedirect(location);
+    }
 }
