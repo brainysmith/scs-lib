@@ -83,7 +83,7 @@ final class SCSessionImpl implements SCSession {
             throw new SCSException(e.getMessage());
         }
         getLogger().debug("Parsed SCS with data = {}, atime = {}, tid = {}, iv = {}, authTag = {}.", new Object[]{
-                this.data, this.atime, this.tid, Base64.encodeBase64(this.iv), Base64.decodeBase64(this.authTag)});
+                this.data, this.atime, this.tid, Base64.encodeBase64String(this.iv), Base64.encodeBase64String(this.authTag)});
     }
 
     @Override

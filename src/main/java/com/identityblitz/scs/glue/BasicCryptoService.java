@@ -34,7 +34,7 @@ public class BasicCryptoService implements CryptoTransformationService {
         protected Cipher initialValue() {
             final Cipher cph;
             try {
-                cph = Cipher.getInstance("AES/CBC/PKCS7Padding");
+                cph = Cipher.getInstance("AES/CBC/PKCS5Padding");
                 return cph;
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
