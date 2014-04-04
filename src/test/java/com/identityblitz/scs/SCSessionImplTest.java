@@ -12,10 +12,10 @@ public class SCSessionImplTest {
 
     @BeforeClass
     public static void setUp() throws Throwable {
-        System.setProperty("com.blitz.scs.crypto.encodingKey", "30313233343536373839616263646566");
-        System.setProperty("com.blitz.scs.crypto.hmacKey", "3031323334353637383930313233343536373839");
-        System.setProperty("com.blitz.scs.sessionMaxAgeInSec", Long.toString(7 * 365 * 86400L));
-        System.setProperty("com.blitz.scs.cookieDomain", "blitz.com");
+        System.setProperty("com.identityblitz.scs.crypto.encodingKey", "30313233343536373839616263646566");
+        System.setProperty("com.identityblitz.scs.crypto.hmacKey", "3031323334353637383930313233343536373839");
+        System.setProperty("com.identityblitz.scs.sessionMaxAgeInSec", Long.toString(7 * 365 * 86400L));
+        System.setProperty("com.identityblitz.scs.cookieDomain", "blitz.com");
     }
 
     @Test

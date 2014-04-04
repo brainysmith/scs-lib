@@ -9,7 +9,7 @@ public enum LoggingUtils {
     private final Logger logger;
 
     private LoggingUtils() {
-        logger = LoggerFactory.getLogger("com.blitz.scs");
+        logger = LoggerFactory.getLogger("com.identityblitz.scs");
     }
 
     public static Logger getLogger() {

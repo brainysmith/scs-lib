@@ -27,7 +27,7 @@ public class SCSFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         final boolean useCompression =
-                ServiceProvider.INSTANCE.getConfiguration().getBoolean("com.blitz.scs.useCompression", false);
+                ServiceProvider.INSTANCE.getConfiguration().getBoolean("com.identityblitz.scs.useCompression", false);
         scsService.init(useCompression);
     }
 

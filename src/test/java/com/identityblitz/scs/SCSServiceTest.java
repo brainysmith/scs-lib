@@ -15,10 +15,10 @@ public class SCSServiceTest {
 
     @BeforeClass
     public static void setUp() throws Throwable {
-        System.setProperty("com.blitz.scs.crypto.encodingKey", "30313233343536373839616263646566");
-        System.setProperty("com.blitz.scs.crypto.hmacKey", "3031323334353637383930313233343536373839");
-        System.setProperty("com.blitz.scs.sessionMaxAgeInSec", Long.toString(7 * 365 * 86400L));
-        System.setProperty("com.blitz.scs.cookieDomain", "blitz.com");
+        System.setProperty("com.identityblitz.scs.crypto.encodingKey", "30313233343536373839616263646566");
+        System.setProperty("com.identityblitz.scs.crypto.hmacKey", "3031323334353637383930313233343536373839");
+        System.setProperty("com.identityblitz.scs.sessionMaxAgeInSec", Long.toString(7 * 365 * 86400L));
+        System.setProperty("com.identityblitz.scs.cookieDomain", "identityblitz.com");
     }
 
     @Test
@@ -36,12 +36,12 @@ public class SCSServiceTest {
     public void scsSCSServiceNotEmptyUpstreamTest() throws SCSException {
         final String SESSION_STATE = "some session state";
         final Cookie cookie = new Cookie("SCS", new SCSService().encode(SESSION_STATE).asString());
-        cookie.setDomain("blitz.com");
+        cookie.setDomain("identityblitz.com");
         cookie.setPath("/");
 
         HttpServletRequest requestMock = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(requestMock.getCookies()).andReturn(new Cookie[]{cookie});
-        requestMock.setAttribute("com.blitz.scs.requestAttribute", "some session state");
+        requestMock.setAttribute("com.identityblitz.scs.requestAttribute", "some session state");
         EasyMock.expectLastCall();
         EasyMock.replay(requestMock);
 
@@ -55,7 +55,7 @@ public class SCSServiceTest {
         final String SESSION_STATE = "some session state";
 
         HttpServletRequest requestMock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(requestMock.getAttribute("com.blitz.scs.requestAttribute")).andReturn("some session state");
+        EasyMock.expect(requestMock.getAttribute("com.identityblitz.scs.requestAttribute")).andReturn("some session state");
 
         HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
         Capture<Cookie> capturedCookie = new Capture<Cookie>();
@@ -69,7 +69,7 @@ public class SCSServiceTest {
         Assert.assertNotNull(session);
 
         final Cookie cookie = capturedCookie.getValue();
-        Assert.assertEquals("blitz.com", cookie.getDomain());
+        Assert.assertEquals("identityblitz.com", cookie.getDomain());
         Assert.assertEquals("/", cookie.getPath());
         Assert.assertTrue(cookie.isHttpOnly());
         Assert.assertEquals("SCS", cookie.getName());
@@ -81,7 +81,7 @@ public class SCSServiceTest {
     @Test
     public void scsSCSServiceEmptyAttribute() throws SCSException {
         HttpServletRequest requestMock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(requestMock.getAttribute("com.blitz.scs.requestAttribute")).andReturn(null);
+        EasyMock.expect(requestMock.getAttribute("com.identityblitz.scs.requestAttribute")).andReturn(null);
         EasyMock.expect(requestMock.getCookies()).andReturn(new Cookie[]{});
 
         HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
@@ -96,13 +96,13 @@ public class SCSServiceTest {
     public void scsSCSServiceOldSessionState() throws SCSException {
         final String SESSION_STATE = "some session state";
         final Cookie cookie = new Cookie("SCS", new SCSService().encode(SESSION_STATE).asString());
-        cookie.setDomain("blitz.com");
+        cookie.setDomain("identityblitz.com");
         cookie.setPath("/");
 
         HttpServletRequest requestMock = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(requestMock.getCookies()).andReturn(new Cookie[]{cookie});
-        EasyMock.expect(requestMock.getAttribute("com.blitz.scs.requestAttribute")).andReturn(null);
-        requestMock.setAttribute("com.blitz.scs.requestAttribute", SESSION_STATE);
+        EasyMock.expect(requestMock.getAttribute("com.identityblitz.scs.requestAttribute")).andReturn(null);
+        requestMock.setAttribute("com.identityblitz.scs.requestAttribute", SESSION_STATE);
         EasyMock.expectLastCall();
 
         HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);

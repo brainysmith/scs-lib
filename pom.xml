@@ -38,6 +38,7 @@
     <properties>
         <jdk.version>1.6</jdk.version>
         <maven-compiler-plugin.version>2.0.2</maven-compiler-plugin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>

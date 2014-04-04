@@ -16,9 +16,9 @@ import static org.apache.commons.codec.binary.StringUtils.getBytesUtf8;
 
 final class SCSessionImpl implements SCSession {
     private static final char FIELD_SEPARATOR = '|';
-    private static final String SERVICE_NAME = "com.blitz.scs.Service";
+    private static final String SERVICE_NAME = "com.identityblitz.scs.Service";
     private static final long SESSION_MAX_AGE_IN_SEC =
-            ServiceProvider.INSTANCE.getConfiguration().getLong("com.blitz.scs.sessionMaxAgeInSec", 3600L);
+            ServiceProvider.INSTANCE.getConfiguration().getLong("com.identityblitz.scs.sessionMaxAgeInSec", 3600L);
 
     private final String data;
     private final byte[] encData;

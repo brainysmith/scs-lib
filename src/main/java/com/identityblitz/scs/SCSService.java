@@ -29,14 +29,14 @@ import static com.identityblitz.scs.LoggingUtils.getLogger;
  */
 public final class SCSService {
     private static final String SCS_COOKIE_NAME = ServiceProvider.INSTANCE.getConfiguration()
-            .getString("com.blitz.scs.cookieName", "SCS");
+            .getString("com.identityblitz.scs.cookieName", "SCS");
     private static final String DOMAIN = ServiceProvider.INSTANCE.getConfiguration()
-            .getString("com.blitz.scs.cookieDomain");
+            .getString("com.identityblitz.scs.cookieDomain");
     private static final boolean IS_SECURE = ServiceProvider.INSTANCE.getConfiguration()
-            .getBoolean("com.blitz.scs.cookieIsSecure", false);
+            .getBoolean("com.identityblitz.scs.cookieIsSecure", false);
     private static final String PATH = ServiceProvider.INSTANCE.getConfiguration()
-            .getString("com.blitz.scs.cookiePath", "/");
-    private static final String SCS_ATTRIBUTE_NAME = "com.blitz.scs.requestAttribute";
+            .getString("com.identityblitz.scs.cookiePath", "/");
+    private static final String SCS_ATTRIBUTE_NAME = "com.identityblitz.scs.requestAttribute";
 
     private boolean useCompression;
     private CryptoTransformationService cryptoService;
