@@ -1,17 +1,17 @@
-package com.blitz.scs;
+package com.identityblitz.scs;
 
-import com.blitz.scs.error.SCSBrokenException;
-import com.blitz.scs.error.SCSException;
-import com.blitz.scs.error.SCSExpiredException;
-import com.blitz.scs.service.ServiceProvider;
-import com.blitz.scs.service.spi.CryptoException;
-import com.blitz.scs.service.spi.CryptoTransformationService;
+import com.identityblitz.scs.error.SCSBrokenException;
+import com.identityblitz.scs.error.SCSException;
+import com.identityblitz.scs.error.SCSExpiredException;
+import com.identityblitz.scs.service.ServiceProvider;
+import com.identityblitz.scs.service.spi.CryptoException;
+import com.identityblitz.scs.service.spi.CryptoTransformationService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import java.util.Date;
-import static com.blitz.scs.DeflateUtils.deflate;
-import static com.blitz.scs.DeflateUtils.inflate;
-import static com.blitz.scs.LoggingUtils.getLogger;
+import static com.identityblitz.scs.DeflateUtils.deflate;
+import static com.identityblitz.scs.DeflateUtils.inflate;
+import static com.identityblitz.scs.LoggingUtils.getLogger;
 import static org.apache.commons.codec.binary.StringUtils.getBytesUtf8;
 
 final class SCSessionImpl implements SCSession {

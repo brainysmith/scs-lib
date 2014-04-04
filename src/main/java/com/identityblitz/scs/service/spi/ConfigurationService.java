@@ -1,4 +1,4 @@
-package com.blitz.scs.service.spi;
+package com.identityblitz.scs.service.spi;
 
 /**
  * The service provides access to the configuration.

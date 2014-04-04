@@ -1,12 +1,12 @@
-package com.blitz.scs;
+package com.identityblitz.scs;
 
-import com.blitz.scs.error.SCSException;
-import com.blitz.scs.service.ServiceProvider;
-import com.blitz.scs.service.spi.CryptoTransformationService;
+import com.identityblitz.scs.error.SCSException;
+import com.identityblitz.scs.service.ServiceProvider;
+import com.identityblitz.scs.service.spi.CryptoTransformationService;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import static com.blitz.scs.LoggingUtils.getLogger;
+import static com.identityblitz.scs.LoggingUtils.getLogger;
 
 /**
  * The service provides operations to work with SCS. The basic operations to encode and decode SCS.
@@ -63,12 +63,12 @@ public final class SCSService {
     }
 
     /**
-     * Decodes the specified string representation of SCS, turns it into {@link com.blitz.scs.SCSession} object
+     * Decodes the specified string representation of SCS, turns it into {@link com.identityblitz.scs.SCSession} object
      * and returns it. While decoding it does all necessary checks including the expiration check.
      * @param scs - string representation of SCS.
      * @return - SCS
-     * @throws com.blitz.scs.error.SCSExpiredException - if SCS is expired.
-     * @throws com.blitz.scs.error.SCSBrokenException - if SCS is broken.
+     * @throws com.identityblitz.scs.error.SCSExpiredException - if SCS is expired.
+     * @throws com.identityblitz.scs.error.SCSBrokenException - if SCS is broken.
      * @throws SCSException - if any other error which doesn't fall into previous two ones.
      */
     public SCSession decode(final String scs) throws SCSException {
@@ -79,11 +79,11 @@ public final class SCSService {
      * Extracts the SCS from the passed HTTP request. If cookie with name specified by configuration parameter
      * <b>com.blitz.scs.cookieName<b/> (default value of the parameter is SCS) is not found the function returns null.
      * Otherwise the cookie's value is decoded and checked. If decoding and checking finish successfully
-     * the {@link com.blitz.scs.SCSession} object is put into the HTTP request as an attribute and also returned.
+     * the {@link com.identityblitz.scs.SCSession} object is put into the HTTP request as an attribute and also returned.
      * @param request - HTTP request.
      * @return - SCS.
-     * @throws com.blitz.scs.error.SCSExpiredException - if SCS is expired.
-     * @throws com.blitz.scs.error.SCSBrokenException - if SCS is broken.
+     * @throws com.identityblitz.scs.error.SCSExpiredException - if SCS is expired.
+     * @throws com.identityblitz.scs.error.SCSBrokenException - if SCS is broken.
      * @throws SCSException - if any other error which doesn't fall into previous two ones.
      */
     public SCSession extractFromUpstream(final HttpServletRequest request) throws SCSException {
@@ -102,7 +102,7 @@ public final class SCSService {
     /**
      * Returns the current session state attached to the passed request. If no session state attached to the request returns null.
      * Before a call to this function it necessary to call function
-     * {@link com.blitz.scs.SCSService#extractFromUpstream(javax.servlet.http.HttpServletRequest)} first.
+     * {@link com.identityblitz.scs.SCSService#extractFromUpstream(javax.servlet.http.HttpServletRequest)} first.
      * Otherwise this function returns null though the request actually has a valid SCS cookie.
      * @param request - HTTP request.
      * @return - current session state.

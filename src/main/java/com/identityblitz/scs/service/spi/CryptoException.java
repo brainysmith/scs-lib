@@ -1,4 +1,4 @@
-package com.blitz.scs.service.spi;
+package com.identityblitz.scs.service.spi;
 
 /**
  * The generic exception for errors relating to cryptographic operations

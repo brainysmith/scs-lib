@@ -1,4 +1,4 @@
-package com.blitz.scs.error;
+package com.identityblitz.scs.error;
 
 /**
  * This SCS exception points that content of SCS is broken. For instance:

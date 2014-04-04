@@ -1,7 +1,7 @@
-package com.blitz.scs.service;
+package com.identityblitz.scs.service;
 
-import com.blitz.scs.service.spi.ConfigurationService;
-import com.blitz.scs.service.spi.CryptoTransformationService;
+import com.identityblitz.scs.service.spi.ConfigurationService;
+import com.identityblitz.scs.service.spi.CryptoTransformationService;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 

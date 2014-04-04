@@ -1,4 +1,4 @@
-package com.blitz.scs.error;
+package com.identityblitz.scs.error;
 
 /**
  * Generic exception for error occurred while SCS processing.

@@ -1,6 +1,6 @@
-package com.blitz.scs;
+package com.identityblitz.scs;
 
-import com.blitz.scs.error.SCSException;
+import com.identityblitz.scs.error.SCSException;
 
 import java.util.Date;
 

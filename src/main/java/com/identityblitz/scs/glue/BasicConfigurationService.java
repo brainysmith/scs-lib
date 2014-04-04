@@ -1,9 +1,9 @@
-package com.blitz.scs.glue;
+package com.identityblitz.scs.glue;
 
-import com.blitz.scs.service.spi.ConfigurationService;
+import com.identityblitz.scs.service.spi.ConfigurationService;
 
 /**
- * The basic implementation {@link com.blitz.scs.service.spi.ConfigurationService} which reads
+ * The basic implementation {@link com.identityblitz.scs.service.spi.ConfigurationService} which reads
  * parameters from Java properties.
  */
 public class BasicConfigurationService implements ConfigurationService {

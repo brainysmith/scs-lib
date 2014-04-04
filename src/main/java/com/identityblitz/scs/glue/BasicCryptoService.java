@@ -1,8 +1,8 @@
-package com.blitz.scs.glue;
+package com.identityblitz.scs.glue;
 
-import com.blitz.scs.service.ServiceProvider;
-import com.blitz.scs.service.spi.CryptoException;
-import com.blitz.scs.service.spi.CryptoTransformationService;
+import com.identityblitz.scs.service.ServiceProvider;
+import com.identityblitz.scs.service.spi.CryptoException;
+import com.identityblitz.scs.service.spi.CryptoTransformationService;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.binary.StringUtils;
@@ -13,10 +13,10 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import static com.blitz.scs.LoggingUtils.getLogger;
+import static com.identityblitz.scs.LoggingUtils.getLogger;
 
 /**
- * The basic cryptographic service implementing {@link com.blitz.scs.service.spi.CryptoTransformationService} interface.
+ * The basic cryptographic service implementing {@link com.identityblitz.scs.service.spi.CryptoTransformationService} interface.
  */
 public class BasicCryptoService implements CryptoTransformationService {
     private final SecretKeySpec encKey;

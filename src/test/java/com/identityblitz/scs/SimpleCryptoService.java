@@ -1,7 +1,7 @@
-package com.blitz.scs;
+package com.identityblitz.scs;
 
-import com.blitz.scs.service.spi.CryptoException;
-import com.blitz.scs.service.spi.CryptoTransformationService;
+import com.identityblitz.scs.service.spi.CryptoException;
+import com.identityblitz.scs.service.spi.CryptoTransformationService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.bouncycastle.crypto.BufferedBlockCipher;

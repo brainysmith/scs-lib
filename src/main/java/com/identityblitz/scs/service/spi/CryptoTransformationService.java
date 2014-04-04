@@ -1,4 +1,4 @@
-package com.blitz.scs.service.spi;
+package com.identityblitz.scs.service.spi;
 
 /**
  * Service that provides basic cryptographic operations used in processing of SCS.
