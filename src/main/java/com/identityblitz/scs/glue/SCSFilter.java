@@ -43,8 +43,14 @@ public class SCSFilter implements Filter {
         }
         chain.doFilter(request, response);
         try {
-            final SCSession session = scsService.putIntoDownstream((HttpServletResponse)response, httpRequest);
-            getLogger().debug("Session put into downstream: {}.", session);
+            if(response.isCommitted()) {
+                getLogger().warn("Response is already committed so SCS cookie will not be set and all session state changes " +
+                        "made during processing the current request will be lost.");
+            }
+            else {
+                final SCSession session = scsService.putIntoDownstream((HttpServletResponse)response, httpRequest);
+                getLogger().debug("Session put into downstream: {}.", session);
+            }
         } catch (SCSException e) {
             throw new ServletException(e);
         }

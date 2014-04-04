@@ -49,7 +49,7 @@ final class SCSessionImpl implements SCSession {
                 Base64.encodeBase64URLSafeString(getBytesUtf8(this.tid)),
                 Base64.encodeBase64URLSafeString(this.iv)));
         getLogger().debug("Created SCS with data = {}, atime = {}, tid = {}, iv = {}, authTag = {}.", new Object[]{
-                this.data, this.atime, this.tid, Base64.encodeBase64(this.iv), Base64.decodeBase64(this.authTag)});
+                this.data, this.atime, this.tid, Base64.encodeBase64String(this.iv), Base64.encodeBase64String(this.authTag)});
     }
 
     SCSessionImpl(final boolean compressed, final CryptoTransformationService crypto, final String scs)
