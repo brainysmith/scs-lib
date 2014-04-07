@@ -36,6 +36,16 @@ public final class SCSService {
             .getBoolean("com.identityblitz.scs.cookieIsSecure", false);
     private static final String PATH = ServiceProvider.INSTANCE.getConfiguration()
             .getString("com.identityblitz.scs.cookiePath", "/");
+
+    /**
+     * This configuration parameter specifies the platform the SCS library is built into. The available values:
+     *  - SERVLET;
+     *  - NETTY-HTTP;
+     *  - PLAY.
+     */
+    private static final Platform PLATFORM = Platform.safeValueOf(ServiceProvider.INSTANCE.getConfiguration()
+            .getString("com.identityblitz.scs.Platform"));
+
     private static final String SCS_ATTRIBUTE_NAME = "com.identityblitz.scs.requestAttribute";
 
     private boolean useCompression;
@@ -104,19 +114,51 @@ public final class SCSService {
      * Before a call to this function it necessary to call function
      * {@link com.identityblitz.scs.SCSService#extractFromUpstream(javax.servlet.http.HttpServletRequest)} first.
      * Otherwise this function returns null though the request actually has a valid SCS cookie.
-     * @param request - HTTP request.
+     * @param req - request.
      * @return - current session state.
      */
-    public static String getCurrentSCS(final HttpServletRequest request) {
-        return (String)request.getAttribute(SCS_ATTRIBUTE_NAME);
+    public static String getSCS(final Object req) {
+        switch ((PLATFORM != null)?PLATFORM:determinePlatform(req)) {
+            case SERVLET:
+                return getServletSCS((HttpServletRequest)req);
+            case NETTY_HTTP:
+            case PLAY:
+            default:
+                throw new IllegalArgumentException("wrong request type");
+        }
     }
 
     /**
      * Sets a passed session sate as the current session state.
-     * @param request - HTTP request.
+     * @param req - request.
      * @param newSessionState - new session state.
      */
-    public static void changeCurrentSCS(final HttpServletRequest request, final String newSessionState) {
+    public static void changeSCS(final Object req, final String newSessionState) {
+        switch ((PLATFORM != null)?PLATFORM:determinePlatform(req)) {
+            case SERVLET:
+                changeServletSCS((HttpServletRequest) req, newSessionState);
+                break;
+            case NETTY_HTTP:
+            case PLAY:
+            default:
+                throw new IllegalArgumentException("wrong request type");
+        }
+    }
+
+    private static Platform determinePlatform(final Object req) {
+        if(req instanceof HttpServletRequest) {
+            return Platform.SERVLET;
+        }
+        else {
+            throw new IllegalArgumentException("wrong request type");
+        }
+    }
+
+    private static String getServletSCS(final HttpServletRequest request) {
+        return (String)request.getAttribute(SCS_ATTRIBUTE_NAME);
+    }
+
+    private static void changeServletSCS(final HttpServletRequest request, final String newSessionState) {
         request.setAttribute(SCS_ATTRIBUTE_NAME, newSessionState);
     }
 
@@ -129,7 +171,7 @@ public final class SCSService {
      * @throws SCSException - if an error occurred while processing the SCS.
      */
     public SCSession putIntoDownstream(final HttpServletResponse response, final HttpServletRequest request) throws SCSException {
-        String currentState = getCurrentSCS(request);
+        String currentState = getSCS(request);
         if(currentState == null) {
             final SCSession prevSession = extractFromUpstream(request);
             if(prevSession != null) {
@@ -173,4 +215,21 @@ public final class SCSService {
         return scsCookie;
     }
 
+}
+
+enum Platform {
+    SERVLET,
+    NETTY_HTTP,
+    PLAY;
+
+    static Platform safeValueOf(final String name) {
+        if(name == null)
+            return null;
+        try {
+            return valueOf(name);
+        }
+        catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
 }
