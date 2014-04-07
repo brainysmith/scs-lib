@@ -1,11 +1,16 @@
 package com.identityblitz.scs;
 
 import com.identityblitz.scs.error.SCSException;
+import com.identityblitz.scs.glue.netty.http.SCSFullHttpRequest;
 import com.identityblitz.scs.service.ServiceProvider;
 import com.identityblitz.scs.service.spi.CryptoTransformationService;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.identityblitz.scs.LoggingUtils.getLogger;
 
 /**
@@ -29,13 +34,13 @@ import static com.identityblitz.scs.LoggingUtils.getLogger;
  */
 public final class SCSService {
     private static final String SCS_COOKIE_NAME = ServiceProvider.INSTANCE.getConfiguration()
-            .getString("com.identityblitz.scs.cookieName", "SCS");
+            .getString(ConfigParameter.SCS_COOKIE_NAME.key(), "SCS");
     private static final String DOMAIN = ServiceProvider.INSTANCE.getConfiguration()
-            .getString("com.identityblitz.scs.cookieDomain");
+            .getString(ConfigParameter.DOMAIN.key());
     private static final boolean IS_SECURE = ServiceProvider.INSTANCE.getConfiguration()
-            .getBoolean("com.identityblitz.scs.cookieIsSecure", false);
+            .getBoolean(ConfigParameter.IS_SECURE.key(), false);
     private static final String PATH = ServiceProvider.INSTANCE.getConfiguration()
-            .getString("com.identityblitz.scs.cookiePath", "/");
+            .getString(ConfigParameter.PATH.key(), "/");
 
     /**
      * This configuration parameter specifies the platform the SCS library is built into. The available values:
@@ -44,9 +49,10 @@ public final class SCSService {
      *  - PLAY.
      */
     private static final Platform PLATFORM = Platform.safeValueOf(ServiceProvider.INSTANCE.getConfiguration()
-            .getString("com.identityblitz.scs.Platform"));
+            .getString(ConfigParameter.PLATFORM.key()));
 
     private static final String SCS_ATTRIBUTE_NAME = "com.identityblitz.scs.requestAttribute";
+    private static final Set<Platform> available = checkAvailable();
 
     private boolean useCompression;
     private CryptoTransformationService cryptoService;
@@ -122,6 +128,7 @@ public final class SCSService {
             case SERVLET:
                 return getServletSCS((HttpServletRequest)req);
             case NETTY_HTTP:
+                return getNettySCS((SCSFullHttpRequest)req);
             case PLAY:
             default:
                 throw new IllegalArgumentException("wrong request type");
@@ -139,15 +146,39 @@ public final class SCSService {
                 changeServletSCS((HttpServletRequest) req, newSessionState);
                 break;
             case NETTY_HTTP:
+                changeNettySCS((SCSFullHttpRequest)req, newSessionState);
+                break;
             case PLAY:
             default:
                 throw new IllegalArgumentException("wrong request type");
         }
     }
 
+    private static Set<Platform> checkAvailable() {
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        Set<Platform> res = new HashSet<Platform>();
+
+        try {
+            loader.loadClass("javax.servlet.http.HttpServletRequest");
+            res.add(Platform.SERVLET);
+        }
+        catch (ClassNotFoundException e) {}
+
+        try {
+            loader.loadClass("com.identityblitz.scs.glue.netty.http.SCSFullHttpRequest");
+            res.add(Platform.NETTY_HTTP);
+        }
+        catch (ClassNotFoundException e) {}
+        catch (NoClassDefFoundError e) {}
+        return Collections.unmodifiableSet(res);
+    }
+
     private static Platform determinePlatform(final Object req) {
-        if(req instanceof HttpServletRequest) {
+        if(available.contains(Platform.SERVLET) && req instanceof HttpServletRequest) {
             return Platform.SERVLET;
+        }
+        else if(available.contains(Platform.NETTY_HTTP) && req instanceof SCSFullHttpRequest) {
+            return Platform.NETTY_HTTP;
         }
         else {
             throw new IllegalArgumentException("wrong request type");
@@ -160,6 +191,14 @@ public final class SCSService {
 
     private static void changeServletSCS(final HttpServletRequest request, final String newSessionState) {
         request.setAttribute(SCS_ATTRIBUTE_NAME, newSessionState);
+    }
+
+    private static String getNettySCS(final SCSFullHttpRequest request) {
+        return request.getSCS();
+    }
+
+    private static void changeNettySCS(final SCSFullHttpRequest request, final String newSessionState) {
+        request.changeSCS(newSessionState);
     }
 
     /**

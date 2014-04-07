@@ -1,4 +1,4 @@
-package com.identityblitz.scs.glue;
+package com.identityblitz.scs.glue.servlet;
 
 import com.identityblitz.scs.SCSService;
 import com.identityblitz.scs.SCSession;

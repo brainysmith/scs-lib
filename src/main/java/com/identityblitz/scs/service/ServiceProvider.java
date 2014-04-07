@@ -30,6 +30,10 @@ public enum ServiceProvider {
         cryptoService = ctsItr.next();
     }
 
+    public static ServiceProvider service() {
+        return INSTANCE;
+    }
+
     public CryptoTransformationService getCryptoService() {
         return cryptoService;
     }
