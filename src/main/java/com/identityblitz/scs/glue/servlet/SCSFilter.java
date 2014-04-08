@@ -1,5 +1,6 @@
 package com.identityblitz.scs.glue.servlet;
 
+import com.identityblitz.scs.ConfigParameter;
 import com.identityblitz.scs.SCSService;
 import com.identityblitz.scs.SCSession;
 import com.identityblitz.scs.error.SCSException;
@@ -16,9 +17,9 @@ import static com.identityblitz.scs.LoggingUtils.getLogger;
  * This HTTP servlet filter allows to add possibility to store session state by using Secure Cookie Session.
  * The filter must be added in the chain before the chain's elements that can try to get access to session state.
  * To get current session state it is necessary to use the function
- * {@link com.identityblitz.scs.SCSService#getCurrentSCS(javax.servlet.http.HttpServletRequest)}
+ * {@link com.identityblitz.scs.SCSService#getSCS(Object)}
  * and to change the current session state - the function
- * {@link com.identityblitz.scs.SCSService#changeCurrentSCS(javax.servlet.http.HttpServletRequest, String)}.
+ * {@link com.identityblitz.scs.SCSService#changeSCS(Object, String)}.
  * The filter has only one boolean option to configure <b>com.blitz.scs.useCompression</b>. This option turns off/on
  * using of compression session state. Default value is not to use compression.
  */
@@ -28,7 +29,7 @@ public class SCSFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         final boolean useCompression =
-                ServiceProvider.INSTANCE.getConfiguration().getBoolean("com.identityblitz.scs.useCompression", false);
+                ServiceProvider.INSTANCE.getConfiguration().getBoolean(ConfigParameter.USE_COMPRESSION.key(), false);
         scsService.init(useCompression);
     }
 

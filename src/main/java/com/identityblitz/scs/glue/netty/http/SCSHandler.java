@@ -32,7 +32,12 @@ public class SCSHandler extends MessageToMessageDecoder<FullHttpRequest> impleme
     private static final String PATH = service().getConfiguration()
             .getString(ConfigParameter.PATH.key(), "/");
 
-    private static final SCSService scsService = new SCSService();
+    private static final SCSService scsService;
+    static {
+        scsService = new SCSService();
+        scsService.init(service().getConfiguration()
+                .getBoolean(ConfigParameter.USE_COMPRESSION.key(), false));
+    }
 
     private SCSFullHttpRequest req;
 

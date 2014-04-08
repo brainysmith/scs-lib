@@ -4,6 +4,8 @@ import com.identityblitz.scs.error.SCSException;
 import com.identityblitz.scs.glue.netty.http.SCSFullHttpRequest;
 import com.identityblitz.scs.service.ServiceProvider;
 import com.identityblitz.scs.service.spi.CryptoTransformationService;
+import play.mvc.Http;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -130,6 +132,7 @@ public final class SCSService {
             case NETTY_HTTP:
                 return getNettySCS((SCSFullHttpRequest)req);
             case PLAY:
+                return getPlaySCS((Http.Context)req);
             default:
                 throw new IllegalArgumentException("wrong request type");
         }
@@ -149,6 +152,8 @@ public final class SCSService {
                 changeNettySCS((SCSFullHttpRequest)req, newSessionState);
                 break;
             case PLAY:
+                changePlaySCS((Http.Context)req, newSessionState);
+                break;
             default:
                 throw new IllegalArgumentException("wrong request type");
         }
@@ -163,6 +168,7 @@ public final class SCSService {
             res.add(Platform.SERVLET);
         }
         catch (ClassNotFoundException e) {}
+        catch (NoClassDefFoundError e) {}
 
         try {
             loader.loadClass("com.identityblitz.scs.glue.netty.http.SCSFullHttpRequest");
@@ -170,6 +176,14 @@ public final class SCSService {
         }
         catch (ClassNotFoundException e) {}
         catch (NoClassDefFoundError e) {}
+
+        try {
+            loader.loadClass("play.mvc.Http$Context");
+            res.add(Platform.PLAY);
+        }
+        catch (ClassNotFoundException e) {}
+        catch (NoClassDefFoundError e) {}
+
         return Collections.unmodifiableSet(res);
     }
 
@@ -179,6 +193,8 @@ public final class SCSService {
         }
         else if(available.contains(Platform.NETTY_HTTP) && req instanceof SCSFullHttpRequest) {
             return Platform.NETTY_HTTP;
+        } if(available.contains(Platform.PLAY) && req instanceof Http.Context) {
+            return Platform.PLAY;
         }
         else {
             throw new IllegalArgumentException("wrong request type");
@@ -201,6 +217,14 @@ public final class SCSService {
         request.changeSCS(newSessionState);
     }
 
+    private static String getPlaySCS(final Http.Context ctx) {
+        return (String)ctx.args.get(SCS_ATTRIBUTE_NAME);
+    }
+
+    private static void changePlaySCS(final Http.Context ctx, final String newSessionState) {
+        ctx.args.put(SCS_ATTRIBUTE_NAME, newSessionState);
+    }
+
     /**
      * Encodes the current session state into a SCS, puts the obtained SCS into the response as a SCS cookie
      * and also returns it. If there is no current session state the function returns null.
@@ -211,13 +235,6 @@ public final class SCSService {
      */
     public SCSession putIntoDownstream(final HttpServletResponse response, final HttpServletRequest request) throws SCSException {
         String currentState = getSCS(request);
-        if(currentState == null) {
-            final SCSession prevSession = extractFromUpstream(request);
-            if(prevSession != null) {
-                currentState = prevSession.getData();
-                getLogger().debug("session state from previous SCS is used.");
-            }
-        }
         if(currentState != null) {
             final SCSession session  = encode(currentState);
             response.addCookie(createSCSCookie(session));
@@ -226,6 +243,13 @@ public final class SCSService {
         }
         else {
             getLogger().debug("there is no session state to store in SCS cookie.");
+            final Cookie expiredCookie = new Cookie(SCS_COOKIE_NAME, null);
+            expiredCookie.setMaxAge(0);
+            expiredCookie.setDomain(DOMAIN);
+            expiredCookie.setSecure(IS_SECURE);
+            expiredCookie.setHttpOnly(true);
+            expiredCookie.setPath(PATH);
+            response.addCookie(expiredCookie);
             return null;
         }
     }

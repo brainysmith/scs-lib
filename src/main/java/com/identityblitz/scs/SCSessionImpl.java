@@ -18,7 +18,7 @@ final class SCSessionImpl implements SCSession {
     private static final char FIELD_SEPARATOR = '|';
     private static final String SERVICE_NAME = "com.identityblitz.scs.Service";
     private static final long SESSION_MAX_AGE_IN_SEC =
-            ServiceProvider.INSTANCE.getConfiguration().getLong("com.identityblitz.scs.sessionMaxAgeInSec", 3600L);
+            ServiceProvider.INSTANCE.getConfiguration().getLong(ConfigParameter.SESSION_MAX_AGE.key(), 3600L);
 
     private final String data;
     private final byte[] encData;

@@ -64,7 +64,7 @@ public class BasicCryptoService implements CryptoTransformationService {
                 ServiceProvider.INSTANCE.getConfiguration().getString("com.identityblitz.scs.crypto.encodingKey");
         if(strEncKey == null) {
             getLogger().error("encoding key is undefined. To fix it is necessary to set " +
-                    "configuration parameter [com.blitz.scs.crypto.encodingKey]");
+                    "configuration parameter [com.identityblitz.scs.crypto.encodingKey]");
             throw new IllegalStateException("encoding key is undefined.");
         }
         encKey = new SecretKeySpec(Hex.decodeHex(strEncKey.toCharArray()), "AES");
@@ -73,7 +73,7 @@ public class BasicCryptoService implements CryptoTransformationService {
                 ServiceProvider.INSTANCE.getConfiguration().getString("com.identityblitz.scs.crypto.hmacKey");
         if(strHmacKey == null) {
             getLogger().error("HMAC key is undefined. To fix it is necessary to set " +
-                    "configuration parameter [om.blitz.scs.crypto.hmacKey]");
+                    "configuration parameter [com.identityblitz.scs.crypto.hmacKey]");
             throw new IllegalStateException("HMAC key is undefined.");
         }
         hmacKey = new SecretKeySpec(Hex.decodeHex(strEncKey.toCharArray()), "HmacSHA1");

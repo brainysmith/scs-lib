@@ -85,15 +85,24 @@ public class SCSServiceTest {
         EasyMock.expect(requestMock.getCookies()).andReturn(new Cookie[]{});
 
         HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
+        Capture<Cookie> capturedCookie = new Capture<Cookie>();
+        responseMock.addCookie(EasyMock.capture(capturedCookie));
+        EasyMock.expectLastCall();
+
         EasyMock.replay(requestMock, responseMock);
 
         final SCSService service = new SCSService();
         SCSession session = service.putIntoDownstream(responseMock, requestMock);
         Assert.assertNull(session);
+        Assert.assertEquals(0, capturedCookie.getValue().getMaxAge());
+        Assert.assertEquals("identityblitz.com", capturedCookie.getValue().getDomain());
+        Assert.assertEquals("/", capturedCookie.getValue().getPath());
+        Assert.assertTrue(capturedCookie.getValue().isHttpOnly());
+        Assert.assertEquals("SCS", capturedCookie.getValue().getName());
     }
 
     @Test
-    public void scsSCSServiceOldSessionState() throws SCSException {
+    public void scsSCSServiceResetSessionState() throws SCSException {
         final String SESSION_STATE = "some session state";
         final Cookie cookie = new Cookie("SCS", new SCSService().encode(SESSION_STATE).asString());
         cookie.setDomain("identityblitz.com");
@@ -113,8 +122,12 @@ public class SCSServiceTest {
         EasyMock.replay(requestMock, responseMock);
         final SCSService service = new SCSService();
         SCSession session = service.putIntoDownstream(responseMock, requestMock);
-        Assert.assertNotNull(session);
-        Assert.assertEquals(SESSION_STATE, service.decode(capturedCookie.getValue().getValue()).getData());
+        Assert.assertNull(session);
+        Assert.assertEquals(0, capturedCookie.getValue().getMaxAge());
+        Assert.assertEquals("identityblitz.com", capturedCookie.getValue().getDomain());
+        Assert.assertEquals("/", capturedCookie.getValue().getPath());
+        Assert.assertTrue(capturedCookie.getValue().isHttpOnly());
+        Assert.assertEquals("SCS", capturedCookie.getValue().getName());
     }
 
 }
