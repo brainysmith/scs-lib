@@ -16,8 +16,8 @@ Usage
 
 There are three pre-built instruments to incorporate the SCS into applications based on Java Servlet, Netty-Http, Play.
 
- Java Servlet
- ------------
+Java Servlet
+-----------
  There is a servlet filter **com.identityblitz.scs.glue.servlet.SCSFilter** to built the SCS into the application.
  The filter should be configured in the Web application deployment descriptor, web.xml. The filter must be placed
  in the chains before any filters or servlets that access SCS. The example of filter configuration in web.xml is
