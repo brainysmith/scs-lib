@@ -12,6 +12,16 @@ import play.mvc.SimpleResult;
 import static com.identityblitz.scs.LoggingUtils.getLogger;
 import static com.identityblitz.scs.service.ServiceProvider.service;
 
+/**
+ * This Play framework action allows to add Secure Cookie Session (SCS) functionality to
+ * actions of Play framework application. The action should be built into actions chain before any actions that use SCS.
+ * To get current session state it is necessary to use the function
+ * {@link com.identityblitz.scs.SCSService#getSCS(Object)}
+ * and to change the current session state - the function
+ * {@link com.identityblitz.scs.SCSService#changeSCS(Object, String)}.
+ * The filter has only one boolean option to configure <b>com.blitz.scs.useCompression</b>. This option turns off/on
+ * using of compression session state. Default value is not to use compression.
+ */
 public class SCSAction extends Action.Simple {
     private static final String SCS_COOKIE_NAME = service().getConfiguration()
             .getString(ConfigParameter.SCS_COOKIE_NAME.key(), "SCS");

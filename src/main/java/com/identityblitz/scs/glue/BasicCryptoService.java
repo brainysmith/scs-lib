@@ -1,5 +1,6 @@
 package com.identityblitz.scs.glue;
 
+import com.identityblitz.scs.ConfigParameter;
 import com.identityblitz.scs.service.ServiceProvider;
 import com.identityblitz.scs.service.spi.CryptoException;
 import com.identityblitz.scs.service.spi.CryptoTransformationService;
@@ -14,6 +15,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import static com.identityblitz.scs.LoggingUtils.getLogger;
+import static com.identityblitz.scs.service.ServiceProvider.service;
 
 /**
  * The basic cryptographic service implementing {@link com.identityblitz.scs.service.spi.CryptoTransformationService} interface.
@@ -60,20 +62,18 @@ public class BasicCryptoService implements CryptoTransformationService {
     };
 
     public BasicCryptoService() throws DecoderException {
-        final String strEncKey =
-                ServiceProvider.INSTANCE.getConfiguration().getString("com.identityblitz.scs.crypto.encodingKey");
+        final String strEncKey = service().getConfiguration().getString(ConfigParameter.ENCODE_KEY.key());
         if(strEncKey == null) {
             getLogger().error("encoding key is undefined. To fix it is necessary to set " +
-                    "configuration parameter [com.identityblitz.scs.crypto.encodingKey]");
+                    "configuration parameter [" + ConfigParameter.ENCODE_KEY.key() + "]");
             throw new IllegalStateException("encoding key is undefined.");
         }
         encKey = new SecretKeySpec(Hex.decodeHex(strEncKey.toCharArray()), "AES");
 
-        final String strHmacKey =
-                ServiceProvider.INSTANCE.getConfiguration().getString("com.identityblitz.scs.crypto.hmacKey");
+        final String strHmacKey = service().getConfiguration().getString(ConfigParameter.HMAC_KEY.key());
         if(strHmacKey == null) {
             getLogger().error("HMAC key is undefined. To fix it is necessary to set " +
-                    "configuration parameter [com.identityblitz.scs.crypto.hmacKey]");
+                    "configuration parameter [" + ConfigParameter.HMAC_KEY.key() + "]");
             throw new IllegalStateException("HMAC key is undefined.");
         }
         hmacKey = new SecretKeySpec(Hex.decodeHex(strEncKey.toCharArray()), "HmacSHA1");

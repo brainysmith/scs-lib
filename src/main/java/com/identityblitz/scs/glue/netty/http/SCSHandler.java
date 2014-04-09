@@ -22,6 +22,18 @@ import static com.identityblitz.scs.service.ServiceProvider.service;
 import static io.netty.handler.codec.http.HttpHeaders.Names.COOKIE;
 import static io.netty.handler.codec.http.HttpHeaders.Names.SET_COOKIE;
 
+/**
+ * This Netty handler allows to add Secure Cookie Session (SCS) functionality to Netty HTTP protocol.
+ * The handler sould be insert into the pipeline after http handlers
+ * {@link io.netty.handler.codec.http.HttpRequestDecoder}, {@link io.netty.handler.codec.http.HttpObjectAggregator},
+ * {@link io.netty.handler.codec.http.HttpResponseEncoder} and before any handlers that use SCS.
+ * To get current session state it is necessary to use the function
+ * {@link com.identityblitz.scs.SCSService#getSCS(Object)}
+ * and to change the current session state - the function
+ * {@link com.identityblitz.scs.SCSService#changeSCS(Object, String)}.
+ * The filter has only one boolean option to configure <b>com.blitz.scs.useCompression</b>. This option turns off/on
+ * using of compression session state. Default value is not to use compression.
+ */
 public class SCSHandler extends MessageToMessageDecoder<FullHttpRequest> implements ChannelOutboundHandler {
     private static final String SCS_COOKIE_NAME = service().getConfiguration()
             .getString(ConfigParameter.SCS_COOKIE_NAME.key(), "SCS");

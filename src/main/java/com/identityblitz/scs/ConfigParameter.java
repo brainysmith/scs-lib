@@ -7,7 +7,9 @@ public enum ConfigParameter {
     PATH("com.identityblitz.scs.cookiePath"),
     PLATFORM("com.identityblitz.scs.Platform"),
     USE_COMPRESSION("com.identityblitz.scs.useCompression"),
-    SESSION_MAX_AGE("com.identityblitz.scs.sessionMaxAgeInSec");
+    SESSION_MAX_AGE("com.identityblitz.scs.sessionMaxAgeInSec"),
+    ENCODE_KEY("com.identityblitz.scs.crypto.encodingKey"),
+    HMAC_KEY("com.identityblitz.scs.crypto.hmacKey");
 
     private String key;
 
