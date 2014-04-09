@@ -37,7 +37,7 @@ Java Servlet
  ```
  To get access to SCS from code there are two static methods in the class **com.identityblitz.scs.SCSService**.
   * SCSService.getSCS(final Object req) - to get the current SCS value.
-  * SCSService.changeSCS(final Object req, final String newSCSValue).
+  * SCSService.changeSCS(final Object req, final String newSCSValue) - to set new SCS value.
 
  *IMPORTANT*
  As the SCS is stored in the cookie and the storing happens at the end of the filter, after completion of the call to
