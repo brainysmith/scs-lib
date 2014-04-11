@@ -74,7 +74,7 @@ Play
     }
  ```
  For access to the SCS also using the same methods, but instead of the request HTTP context used. The example of obtaining
- of the SCS below.
+ of the SCS is below.
  ```
     SCSService.getSCS(ctx())
  ```
