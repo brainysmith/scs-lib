@@ -61,4 +61,20 @@ Netty-Http
     pipeline.addLast("encoder", new HttpResponseEncoder());
     pipeline.addLast("scs", new SCSHandler());
  ```
- To get access to SCS from code use the same methods as in the case with Java Servlet.
+ To get access to SCS from code using the same methods as in the case with Java Servlet.
+
+Play
+----
+ The annotation **com.identityblitz.scs.glue.play.SCSEnabled** adds SCS functionality to the Play actor or to the controller.
+ The example of adding SCS to Play actor is given below.
+ ```
+    @SCSEnabled
+    public static Result login() {
+        return ok(login.render(loginForm));
+    }
+ ```
+ For access to the SCS also using the same methods, but instead of the request HTTP context used. The example of obtaining
+ of the SCS below.
+ ```
+    SCSService.getSCS(ctx())
+ ```
