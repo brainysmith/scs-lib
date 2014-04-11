@@ -17,7 +17,7 @@ Usage
 There are three pre-built instruments to incorporate the SCS into applications based on Java Servlet, Netty-Http, Play.
 
 Java Servlet
------------
+------------
  There is a servlet filter **com.identityblitz.scs.glue.servlet.SCSFilter** to built the SCS into the application.
  The filter should be configured in the Web application deployment descriptor, web.xml. The filter must be placed
  in the chains before any filters or servlets that access SCS. The example of filter configuration in web.xml is
@@ -46,3 +46,19 @@ Java Servlet
   *Response is already committed so SCS cookie will not be set and all session state changes made during processing
   the current request will be lost.*
 
+Netty-Http
+----------
+ To incorporate SCS into the application it is enough to add the handler **com.identityblitz.scs.glue.netty.http.SCSHandler**
+ to the pipeline after HttpRequestDecoder, HttpObjectAggregator and HttpResponseEncoder. Below the snippet of the code to
+ add SCS handler.
+ ```
+    import com.identityblitz.scs.glue.netty.http.SCSHandler;
+
+    ...
+
+    pipeline.addLast("decoder", new HttpRequestDecoder());
+    pipeline.addLast("aggregator", new HttpObjectAggregator(65536));
+    pipeline.addLast("encoder", new HttpResponseEncoder());
+    pipeline.addLast("scs", new SCSHandler());
+ ```
+ To get access to SCS from code use the same methods as in the case with Java Servlet.
