@@ -78,3 +78,13 @@ Play
  ```
     SCSService.getSCS(ctx());
  ```
+Downloads
+=========
+To release artifacts Maven is used. All release versions are available from Maven Central Repository.
+```
+    <dependency>
+        <groupId>com.identityblitz</groupId>
+        <artifactId>scs-lib</artifactId>
+        <version>0.1.0</version>
+    </dependency>
+```
