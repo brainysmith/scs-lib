@@ -14,7 +14,7 @@ import static com.identityblitz.scs.service.ServiceProvider.service;
 
 /**
  * This Play framework action allows to add Secure Cookie Session (SCS) functionality to
- * actions of Play framework application. The action should be built into actions chain before any actions that use SCS.
+ * actions of the Play framework application. The action should be built into actions chain before any actions that use SCS.
  * To get current session state it is necessary to use the function
  * {@link com.identityblitz.scs.SCSService#getSCS(Object)}
  * and to change the current session state - the function
