@@ -85,6 +85,24 @@
             <artifactId>play-java_2.10</artifactId>
             <version>2.2.2</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github.scala-incubator.io</groupId>
+                    <artifactId>scala-io-file_2.10</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.typesafe.akka</groupId>
+                    <artifactId>akka-actor_2.10</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.typesafe.akka</groupId>
+                    <artifactId>akka-slf4j_2.10</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.scala-stm</groupId>
+                    <artifactId>scala-stm_2.10</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
