@@ -4,7 +4,7 @@ import play.api.mvc._
 import com.identityblitz.scs.{ConfigParameter, SCSService}
 import scala.concurrent.Future
 import scala.util.Try
-import com.identityblitz.scs.error.{SCSExpiredException, SCSBrokenException}
+import com.identityblitz.scs.error.{SCSException, SCSExpiredException, SCSBrokenException}
 import play.api.libs.concurrent.Execution.Implicits._
 import com.identityblitz.scs.service.ServiceProvider._
 import play.api.mvc.DiscardingCookie
@@ -46,9 +46,10 @@ object SCSEnabledAction extends ActionBuilder[SCSRequest] {
         case e: SCSExpiredException =>
           getLogger.info("Got expired SCS cookie: " + e.getMessage)
           callBlock(request, block)
-        case i =>
-          getLogger.error(i.getMessage)
+        case s: SCSException =>
+          getLogger.error(s.getMessage)
           Future.successful(Results.InternalServerError)
+        case o => throw o
       }.get
     }).getOrElse(callBlock(request, block))
   }
