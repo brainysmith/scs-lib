@@ -54,12 +54,14 @@ object SCSEnabledAction extends ActionBuilder[SCSRequest] {
     }).getOrElse(callBlock(request, block))
   }
 
-  def callBlock[A](request: Request[A], block: (SCSRequest[A]) => Future[SimpleResult], state: Option[String] = None): Future[SimpleResult] = {
+  def callBlock[A](request: Request[A],
+                   block: (SCSRequest[A]) => Future[SimpleResult],
+                   state: Option[String] = None): Future[SimpleResult] = {
     val scs = new SCSRequest(state, request)
     block(scs).map(res => scs.getSCS.map(s => {
       val session = scsService.encode(s)
       getLogger.debug("session state is stored into SCS cookie {}.", session)
-      res.withCookies(Cookie(SCS_COOKIE_NAME, session.asString, None, PATH, DOMAIN, IS_SECURE, true))
+      res.withCookies(Cookie(SCS_COOKIE_NAME, session.asString, None, PATH, DOMAIN, IS_SECURE, httpOnly = true))
     }).getOrElse{
       getLogger.debug("there is no session state to store in SCS cookie.")
       res.discardingCookies(DiscardingCookie(SCS_COOKIE_NAME, PATH, DOMAIN, IS_SECURE))
