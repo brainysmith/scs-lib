@@ -37,11 +37,13 @@ public class SCSFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         final HttpServletRequest httpRequest = (HttpServletRequest)request;
-        try {
-            final SCSession session = scsService.extractFromUpstream(httpRequest);
-            getLogger().debug("Session extracted from upstream: {}.", session);
-        } catch (SCSException e) {
-            throw new ServletException(e);
+        if(httpRequest.getDispatcherType() == DispatcherType.REQUEST) {
+            try {
+                final SCSession session = scsService.extractFromUpstream(httpRequest);
+                getLogger().debug("Session extracted from upstream: {}.", session);
+            } catch (SCSException e) {
+                throw new ServletException(e);
+            }
         }
         chain.doFilter(request, new ScsHttpServletResponse((HttpServletResponse)response, httpRequest, scsService));
         try {
