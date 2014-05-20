@@ -33,30 +33,34 @@ object SCSEnabledAction extends ActionBuilder[SCSRequest] {
   scsService.init(service.getConfiguration.getBoolean(ConfigParameter.USE_COMPRESSION.key, false))
 
   def invokeBlock[A](request: Request[A], block: (SCSRequest[A]) => Future[SimpleResult]): Future[SimpleResult] = {
-    request.cookies.get(SCS_COOKIE_NAME).map(c => {
-      Try[String]{
-        val session = scsService.decode(c.value)
-        getLogger.debug("SCS [{}] is extracted from request cookie.", session)
-        session.getData}.map(s => callBlock(request, block, Some(s)))
-        .recover {
-        case b: SCSBrokenException =>
-          getLogger.error("Got broken SCS cookie: " + b.getMessage)
-          Future.successful(Results.BadRequest
-            .discardingCookies(DiscardingCookie(SCS_COOKIE_NAME, PATH, DOMAIN, IS_SECURE)))
-        case e: SCSExpiredException =>
-          getLogger.info("Got expired SCS cookie: " + e.getMessage)
-          callBlock(request, block)
-        case s: SCSException =>
-          getLogger.error(s.getMessage)
-          Future.successful(Results.InternalServerError)
-        case o => throw o
-      }.get
-    }).getOrElse(callBlock(request, block))
+    request match {
+      case sr: SCSRequest[A] => block(sr)
+      case r: Request[A] =>
+        request.cookies.get(SCS_COOKIE_NAME).map(c => {
+          Try[String]{
+            val session = scsService.decode(c.value)
+            getLogger.debug("SCS [{}] is extracted from request cookie.", session)
+            session.getData}.map(s => callBlockWithState(request, block, Some(s)))
+            .recover {
+            case b: SCSBrokenException =>
+              getLogger.error("Got broken SCS cookie: " + b.getMessage)
+              Future.successful(Results.BadRequest
+                .discardingCookies(DiscardingCookie(SCS_COOKIE_NAME, PATH, DOMAIN, IS_SECURE)))
+            case e: SCSExpiredException =>
+              getLogger.info("Got expired SCS cookie: " + e.getMessage)
+              callBlockWithState(request, block)
+            case s: SCSException =>
+              getLogger.error(s.getMessage)
+              Future.successful(Results.InternalServerError)
+            case o => throw o
+          }.get
+        }).getOrElse(callBlockWithState(request, block))
+    }
   }
 
-  def callBlock[A](request: Request[A],
-                   block: (SCSRequest[A]) => Future[SimpleResult],
-                   state: Option[String] = None): Future[SimpleResult] = {
+  def callBlockWithState[A](request: Request[A],
+                            block: (SCSRequest[A]) => Future[SimpleResult],
+                            state: Option[String] = None): Future[SimpleResult] = {
     val scs = new SCSRequest(state, request)
     block(scs).map(res => scs.getSCS.map(s => {
       val session = scsService.encode(s)
