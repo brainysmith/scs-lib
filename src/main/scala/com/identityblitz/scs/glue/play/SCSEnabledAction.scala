@@ -77,3 +77,8 @@ class SCSRequest[A](private var state: Option[String], request: Request[A]) exte
   def getSCS = state
   def changeSCS(newState: Option[String]) = {state = newState}
 }
+
+object SCSRequest {
+  def apply[A](state: Option[String], requestHeader: RequestHeader, body: A) =
+    new SCSRequest(state, Request(requestHeader, body))
+}
