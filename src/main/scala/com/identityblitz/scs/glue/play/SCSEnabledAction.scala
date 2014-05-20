@@ -12,6 +12,7 @@ import play.api.mvc.Cookie
 import scala.Some
 import play.api.mvc.SimpleResult
 import com.identityblitz.scs.LoggingUtils._
+import play.mvc.Http.HeaderNames
 
 /**
  * The Play framework action builder to add the SCS functionality to the actors from the Play application
@@ -64,11 +65,23 @@ object SCSEnabledAction extends ActionBuilder[SCSRequest] {
     val scs = new SCSRequest(state, request)
     block(scs).map(res => scs.getSCS.map(s => {
       val session = scsService.encode(s)
-      getLogger.debug("session state is stored into SCS cookie {}.", session)
-      res.withCookies(Cookie(SCS_COOKIE_NAME, session.asString, None, PATH, DOMAIN, IS_SECURE, httpOnly = true))
+      if(!Cookies.decode(res.header.headers.get(HeaderNames.SET_COOKIE).getOrElse("")).exists(_.name == SCS_COOKIE_NAME)) {
+        getLogger.debug("session state is stored into SCS cookie {}.", session)
+        res.withCookies(Cookie(SCS_COOKIE_NAME, session.asString, None, PATH, DOMAIN, IS_SECURE, httpOnly = true))
+      }
+      else {
+        getLogger.debug("session state is already committed.")
+        res
+      }
     }).getOrElse{
-      getLogger.debug("there is no session state to store in SCS cookie.")
-      res.discardingCookies(DiscardingCookie(SCS_COOKIE_NAME, PATH, DOMAIN, IS_SECURE))
+      if(!Cookies.decode(res.header.headers.get(HeaderNames.SET_COOKIE).getOrElse("")).exists(_.name == SCS_COOKIE_NAME)) {
+        getLogger.debug("there is no session state to store in SCS cookie.")
+        res.discardingCookies(DiscardingCookie(SCS_COOKIE_NAME, PATH, DOMAIN, IS_SECURE))
+      }
+      else {
+        getLogger.debug("session state is already committed.")
+        res
+      }
     })
   }
 }
