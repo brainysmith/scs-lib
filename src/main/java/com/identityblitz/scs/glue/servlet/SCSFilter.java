@@ -30,7 +30,7 @@ public class SCSFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         final boolean useCompression =
                 ServiceProvider.INSTANCE.getConfiguration().getBoolean(ConfigParameter.USE_COMPRESSION.key(), false);
-        scsService.init(useCompression);
+        scsService.init(useCompression, null);
     }
 
     @Override

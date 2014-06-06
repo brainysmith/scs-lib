@@ -57,6 +57,7 @@ public final class SCSService {
     private static final Set<Platform> available = checkAvailable();
 
     private boolean useCompression;
+    private Long sSessionMaxAge;
     private CryptoTransformationService cryptoService;
 
     public SCSService() {
@@ -65,9 +66,11 @@ public final class SCSService {
         cryptoService = ServiceProvider.INSTANCE.getCryptoService();
     }
 
-    public void init(final boolean useCompression) {
+    public void init(final boolean useCompression, final Long sSessionMaxAge) {
         this.useCompression = useCompression;
         getLogger().debug("SCS cookie compression is set to {}.", this.useCompression);
+        this.sSessionMaxAge = sSessionMaxAge;
+        getLogger().debug("SCS session max age is set to {}.", this.useCompression);
     }
 
     /**
@@ -90,7 +93,7 @@ public final class SCSService {
      * @throws SCSException - if any other error which doesn't fall into previous two ones.
      */
     public SCSession decode(final String scs) throws SCSException {
-        return new SCSessionImpl(useCompression, cryptoService, scs);
+        return new SCSessionImpl(useCompression, cryptoService, scs, sSessionMaxAge);
     }
 
     /**

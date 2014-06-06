@@ -36,7 +36,7 @@ public class SCSAction extends Action.Simple {
     static {
         scsService = new SCSService();
         scsService.init(service().getConfiguration()
-                .getBoolean(ConfigParameter.USE_COMPRESSION.key(), false));
+                .getBoolean(ConfigParameter.USE_COMPRESSION.key(), false), null);
     }
 
     @Override

@@ -31,7 +31,7 @@ object SCSEnabledAction extends ActionBuilder[SCSRequest] {
   private final val PATH = service.getConfiguration.getString(ConfigParameter.PATH.key, "/")
 
   private val scsService = new SCSService
-  scsService.init(service.getConfiguration.getBoolean(ConfigParameter.USE_COMPRESSION.key, false))
+  scsService.init(service.getConfiguration.getBoolean(ConfigParameter.USE_COMPRESSION.key, false), null)
 
   def invokeBlock[A](request: Request[A], block: (SCSRequest[A]) => Future[SimpleResult]): Future[SimpleResult] = {
     request match {

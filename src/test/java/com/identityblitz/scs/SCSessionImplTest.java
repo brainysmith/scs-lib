@@ -2,6 +2,7 @@ package com.identityblitz.scs;
 
 import com.identityblitz.scs.error.SCSBrokenException;
 import com.identityblitz.scs.error.SCSException;
+import com.identityblitz.scs.error.SCSExpiredException;
 import junit.framework.Assert;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.BeforeClass;
@@ -56,7 +57,7 @@ public class SCSessionImplTest {
 
         SimpleCryptoService cryptoService = new SimpleCryptoService();
         cryptoService.init("PZ84RGBeLN_S9n-sViQTnQ", encKey, hmacKey);
-        SCSession session = new SCSessionImpl(false, cryptoService, originalScs);
+        SCSession session = new SCSessionImpl(false, cryptoService, originalScs, null);
 
         Assert.assertEquals(state, session.getData());
         Assert.assertEquals(new Date(atime * 1000), session.getAtime());
@@ -74,7 +75,7 @@ public class SCSessionImplTest {
 
         SimpleCryptoService cryptoService = new SimpleCryptoService();
         cryptoService.init("uWArYb9mV08tboY8DSVylA", encKey, hmacKey);
-        SCSession session = new SCSessionImpl(true, cryptoService, originalScs);
+        SCSession session = new SCSessionImpl(true, cryptoService, originalScs, null);
 
         Assert.assertEquals(originalScs, session.asString());
         Assert.assertEquals(state, session.getData());
@@ -93,7 +94,20 @@ public class SCSessionImplTest {
 
         SimpleCryptoService cryptoService = new SimpleCryptoService();
         cryptoService.init("PZ84RGBeLN_S9n-sViQTnQ", encKey, hmacKey);
-        SCSession session = new SCSessionImpl(false, cryptoService, originalScs);
+        SCSession session = new SCSessionImpl(false, cryptoService, originalScs, null);
+    }
+
+    @Test(expected = SCSExpiredException.class)
+    public void scsExpirationOptionTest() throws SCSException {
+        final String state = "some state value";
+        final byte[] encKey = "0123456789abcdef".getBytes();
+        final byte[] hmacKey = "01234567890123456789".getBytes();
+        final Date atime = new Date(System.currentTimeMillis() - 7 * 60 * 1000);
+
+        SimpleCryptoService cryptoService = new SimpleCryptoService();
+        cryptoService.init("PZ84RGBeLN_S9n-sViQTnQ", encKey, hmacKey);
+        SCSession session = new SCSessionImpl(state, atime, false, cryptoService);
+        new SCSessionImpl(false, cryptoService, session.asString(), 3 * 60L);
     }
 
 }

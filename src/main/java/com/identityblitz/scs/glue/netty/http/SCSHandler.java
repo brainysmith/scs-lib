@@ -48,7 +48,7 @@ public class SCSHandler extends MessageToMessageDecoder<FullHttpRequest> impleme
     static {
         scsService = new SCSService();
         scsService.init(service().getConfiguration()
-                .getBoolean(ConfigParameter.USE_COMPRESSION.key(), false));
+                .getBoolean(ConfigParameter.USE_COMPRESSION.key(), false), null);
     }
 
     private SCSFullHttpRequest req;

@@ -52,7 +52,7 @@ final class SCSessionImpl implements SCSession {
                 this.data, this.atime, this.tid, Base64.encodeBase64String(this.iv), Base64.encodeBase64String(this.authTag)});
     }
 
-    SCSessionImpl(final boolean compressed, final CryptoTransformationService crypto, final String scs)
+    SCSessionImpl(final boolean compressed, final CryptoTransformationService crypto, final String scs, final Long sMaxAge)
             throws SCSException {
         final String[] parts = scs.split("\\|");
         if(parts.length != 5) {
@@ -68,7 +68,7 @@ final class SCSessionImpl implements SCSession {
         }
 
         final long atimeInSec = Long.valueOf(StringUtils.newStringUtf8(Base64.decodeBase64(parts[1])));
-        if(atimeInSec + SESSION_MAX_AGE_IN_SEC < (new Date().getTime() / 1000)) {
+        if(atimeInSec + getMaxAge(sMaxAge) < (new Date().getTime() / 1000)) {
             getLogger().info("SCS {} is expired", scs);
             throw new SCSExpiredException(new Date(atimeInSec * 1000), new Date());
         }
@@ -109,6 +109,10 @@ final class SCSessionImpl implements SCSession {
             builder.setLength(builder.length() - 1);
         }
         return builder.toString();
+    }
+
+    private static long getMaxAge(final Long sMaxAge) {
+        return sMaxAge == null ? SESSION_MAX_AGE_IN_SEC : sMaxAge;
     }
 
     @Override
