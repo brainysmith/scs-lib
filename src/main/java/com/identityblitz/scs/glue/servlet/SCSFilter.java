@@ -4,6 +4,7 @@ import com.identityblitz.scs.ConfigParameter;
 import com.identityblitz.scs.SCSService;
 import com.identityblitz.scs.SCSession;
 import com.identityblitz.scs.error.SCSException;
+import com.identityblitz.scs.error.SCSExpiredException;
 import com.identityblitz.scs.service.ServiceProvider;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +42,7 @@ public class SCSFilter implements Filter {
             try {
                 final SCSession session = scsService.extractFromUpstream(httpRequest);
                 getLogger().debug("Session extracted from upstream: {}.", session);
+            } catch (SCSExpiredException e) {
             } catch (SCSException e) {
                 throw new ServletException(e);
             }
