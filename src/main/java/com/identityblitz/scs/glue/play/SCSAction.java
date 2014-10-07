@@ -7,7 +7,7 @@ import com.identityblitz.scs.error.SCSExpiredException;
 import play.libs.F;
 import play.mvc.Action;
 import play.mvc.Http;
-import play.mvc.SimpleResult;
+import play.mvc.Result;
 
 import static com.identityblitz.scs.LoggingUtils.getLogger;
 import static com.identityblitz.scs.service.ServiceProvider.service;
@@ -40,7 +40,7 @@ public class SCSAction extends Action.Simple {
     }
 
     @Override
-    public F.Promise<SimpleResult> call(Http.Context ctx) throws Throwable {
+    public F.Promise<Result> call(Http.Context ctx) throws Throwable {
         final Http.Cookie scsCookie = ctx.request().cookie(SCS_COOKIE_NAME);
         if(scsCookie != null) {
             try {
@@ -50,7 +50,7 @@ public class SCSAction extends Action.Simple {
             }
             catch(SCSExpiredException e) {}
         }
-        final F.Promise<SimpleResult> resultPromise = delegate.call(ctx);
+        final F.Promise<Result> resultPromise = delegate.call(ctx);
 
         final String state = SCSService.getSCS(ctx);
         if(state != null) {
