@@ -76,7 +76,7 @@ public class BasicCryptoService implements CryptoTransformationService {
                     "configuration parameter [" + ConfigParameter.HMAC_KEY.key() + "]");
             throw new IllegalStateException("HMAC key is undefined.");
         }
-        hmacKey = new SecretKeySpec(Hex.decodeHex(strEncKey.toCharArray()), "HmacSHA1");
+        hmacKey = new SecretKeySpec(Hex.decodeHex(strHmacKey.toCharArray()), "HmacSHA1");
     }
 
     @Override
