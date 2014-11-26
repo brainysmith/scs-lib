@@ -33,7 +33,7 @@ object SCSEnabledAction extends ActionBuilder[SCSRequest] {
   private val scsService = new SCSService
   scsService.init(service.getConfiguration.getBoolean(ConfigParameter.USE_COMPRESSION.key, false), null)
 
-  def invokeBlock[A](request: Request[A], block: (SCSRequest[A]) => Future[SimpleResult]): Future[SimpleResult] = {
+  def invokeBlock[A](request: Request[A], block: (SCSRequest[A]) => Future[Result]): Future[Result] = {
     request match {
       case sr: SCSRequest[A] => block(sr)
       case r: Request[A] =>
@@ -60,8 +60,8 @@ object SCSEnabledAction extends ActionBuilder[SCSRequest] {
   }
 
   def callBlockWithState[A](request: Request[A],
-                            block: (SCSRequest[A]) => Future[SimpleResult],
-                            state: Option[String] = None): Future[SimpleResult] = {
+                            block: (SCSRequest[A]) => Future[Result],
+                            state: Option[String] = None): Future[Result] = {
     val scs = new SCSRequest(state, request)
     block(scs).map(res => scs.getSCS.map(s => {
       val session = scsService.encode(s)
