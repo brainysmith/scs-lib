@@ -30,7 +30,7 @@ object SCSEnabledAction extends ActionBuilder[SCSRequest] {
   private final val IS_SECURE: Boolean = service.getConfiguration.getBoolean(ConfigParameter.IS_SECURE.key, false)
   private final val PATH = service.getConfiguration.getString(ConfigParameter.PATH.key, "/")
 
-  private val scsService = new SCSService
+  val scsService = new SCSService
   scsService.init(service.getConfiguration.getBoolean(ConfigParameter.USE_COMPRESSION.key, false), null)
 
   def invokeBlock[A](request: Request[A], block: (SCSRequest[A]) => Future[Result]): Future[Result] = {
