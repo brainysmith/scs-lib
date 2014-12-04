@@ -43,20 +43,46 @@
         </repository>
     </repositories>
 
-    <distributionManagement>
-        <repository>
-            <id>com.identityblitz.release</id>
-            <name>com.identityblitz</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-        </repository>
-    </distributionManagement>
-
     <properties>
         <jdk.version>1.6</jdk.version>
         <maven-compiler-plugin.version>2.0.2</maven-compiler-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <nexus-repository>http://build.reaxoft.loc/store/content/repositories</nexus-repository>
     </properties>
 
+    <profiles>
+        <profile>
+            <id>Reaxoft</id>
+            <distributionManagement>
+                <repository>
+                    <id>build</id>
+                    <uniqueVersion>false</uniqueVersion>
+                    <name>com.identityblitz</name>
+                    <url>${nexus-repository}/blitz-dev</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>Maven</id>
+            <distributionManagement>
+                <repository>
+                    <id>com.identityblitz.release</id>
+                    <name>com.identityblitz</name>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
+<!--
+    <distributionManagement>
+        <repository>
+            <id>com.identityblitz.release</id>
+            <name>com.identityblitz</name>
+            <url>http://build.reaxoft.loc/store/content/repositories/blitz-dev</url>
+        </repository>
+    </distributionManagement>
+-->
     <dependencies>
         <dependency>
             <groupId>commons-codec</groupId>
