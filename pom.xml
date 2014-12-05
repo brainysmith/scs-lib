@@ -58,7 +58,7 @@
                     <id>build</id>
                     <uniqueVersion>false</uniqueVersion>
                     <name>com.identityblitz</name>
-                    <url>${nexus-repository}/blitz-dev</url>
+                    <url>${nexus-repository}/blitz-snapshots</url>
                 </repository>
             </distributionManagement>
         </profile>
