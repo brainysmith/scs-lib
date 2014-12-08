@@ -52,7 +52,7 @@
 
     <profiles>
         <profile>
-            <id>SHAPSHOT</id>
+            <id>SNAPSHOT</id>
             <distributionManagement>
                 <repository>
                     <id>build</id>
