@@ -52,7 +52,7 @@
 
     <profiles>
         <profile>
-            <id>Reaxoft</id>
+            <id>SHAPSHOT</id>
             <distributionManagement>
                 <repository>
                     <id>build</id>
@@ -63,7 +63,18 @@
             </distributionManagement>
         </profile>
         <profile>
-            <id>Maven</id>
+            <id>RELEASE.REAXOFT</id>
+            <distributionManagement>
+                <repository>
+                    <id>build</id>
+                    <uniqueVersion>false</uniqueVersion>
+                    <name>com.identityblitz</name>
+                    <url>${nexus-repository}/blitz-release</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>RELEASE.MAVEN</id>
             <distributionManagement>
                 <repository>
                     <id>com.identityblitz.release</id>
@@ -74,15 +85,6 @@
         </profile>
     </profiles>
 
-<!--
-    <distributionManagement>
-        <repository>
-            <id>com.identityblitz.release</id>
-            <name>com.identityblitz</name>
-            <url>http://build.reaxoft.loc/store/content/repositories/blitz-dev</url>
-        </repository>
-    </distributionManagement>
--->
     <dependencies>
         <dependency>
             <groupId>commons-codec</groupId>
