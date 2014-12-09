@@ -76,10 +76,16 @@
         <profile>
             <id>RELEASE.MAVEN</id>
             <distributionManagement>
+                <!--
                 <repository>
                     <id>com.identityblitz.release</id>
                     <name>com.identityblitz</name>
                     <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+                -->
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
                 </repository>
             </distributionManagement>
         </profile>
